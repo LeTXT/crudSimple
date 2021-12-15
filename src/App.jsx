@@ -9,12 +9,14 @@ export default function App() {
   const [tasks, setTasks] = useState([])
   const [modoEdition, setModoEdition] = useState(false)
   const [id, setId] = useState('')
+  const [error, setError] = useState(null)
 
   const addTask = e => {
     e.preventDefault()
 
-    if(!task) {
+    if(!task.trim()) {
       console.log('vazio')
+      setError('Escreva algo por favor!')
       return
     }
 
@@ -26,6 +28,8 @@ export default function App() {
     ])
 
     setTask('')
+    setError(null)
+
 
   }
 
@@ -39,12 +43,15 @@ export default function App() {
     setModoEdition(true)
     setTask(item.nameTask)
     setId(item.id)
+    setError(null)
+
   }
 
   const editTask = e => {
     e.preventDefault()
     if(!task.trim()) {
       console.log('vazio')
+      setError('Escreva algo por favor!')
       return
     }
 
@@ -56,6 +63,7 @@ export default function App() {
     setModoEdition(false)
     setTask('')
     setId('')
+    setError(null)
   }
 
   return (
@@ -67,22 +75,28 @@ export default function App() {
           <h4 className="text-center">Lista de tarefas</h4>
           <ul className="list-group">
             {
-              tasks.map(item => (
-            <li className="list-group-item" key={item.id}>
-              <span className="lead">{item.nameTask}</span>
-              <button className="btn btn-danger btn-sm float-end mx-2 "
-              onClick={() => deleteTask(item.id)}
-              >
-                Eliminar
-              </button>
 
-              <button className="btn btn-warning btn-sm float-end"
-              onClick={() => edit(item)}
-              >
-                Editar
-              </button>
-            </li>
-              ))
+              tasks.length === 0 ? (
+                <li className='list-group-item'>Não há tarefas</li>
+              ) : (
+
+                tasks.map(item => (
+              <li className="list-group-item" key={item.id}>
+                <span className="lead">{item.nameTask}</span>
+                <button className="btn btn-danger btn-sm float-end mx-2 "
+                onClick={() => deleteTask(item.id)}
+                >
+                  Eliminar
+                </button>
+  
+                <button className="btn btn-warning btn-sm float-end"
+                onClick={() => edit(item)}
+                >
+                  Editar
+                </button>
+              </li>
+                ))
+              )
             }
 
 
@@ -95,6 +109,9 @@ export default function App() {
             }
             </h4>
           <form onSubmit={modoEdition ? editTask : addTask}>
+            {
+              error ? <span className='text-danger'>{error}</span> : null
+            }
             <input 
             type="text" 
             className="form-control mb-2" 
