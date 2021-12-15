@@ -7,12 +7,15 @@ export default function App() {
 
   const [task, setTask] = useState('')
   const [tasks, setTasks] = useState([])
+  const [modoEdition, setModoEdition] = useState(false)
+  const [id, setId] = useState('')
 
   const addTask = e => {
     e.preventDefault()
 
     if(!task) {
       console.log('vazio')
+      return
     }
 
     console.log(task)
@@ -29,6 +32,30 @@ export default function App() {
   const deleteTask = id => {
     const arrayFilter = tasks.filter(item => item.id !== id)
     setTasks(arrayFilter)
+  }
+
+  const edit = item => {
+    console.log(item)
+    setModoEdition(true)
+    setTask(item.nameTask)
+    setId(item.id)
+  }
+
+  const editTask = e => {
+    e.preventDefault()
+    if(!task.trim()) {
+      console.log('vazio')
+      return
+    }
+
+    const arrayEdited = tasks.map(
+      item => item.id === id ? {id:id, nameTask: task} : item
+    )
+
+    setTasks(arrayEdited)
+    setModoEdition(false)
+    setTask('')
+    setId('')
   }
 
   return (
@@ -50,7 +77,7 @@ export default function App() {
               </button>
 
               <button className="btn btn-warning btn-sm float-end"
-              
+              onClick={() => edit(item)}
               >
                 Editar
               </button>
@@ -62,8 +89,12 @@ export default function App() {
           </ul>
         </div>
         <div className="col-4">
-          <h4 className="textcenter">Formulário</h4>
-          <form onSubmit={addTask}>
+          <h4 className="text-center">
+            {
+              modoEdition ? 'Editar Tarefa' : 'Adicionar tarefa'
+            }
+            </h4>
+          <form onSubmit={modoEdition ? editTask : addTask}>
             <input 
             type="text" 
             className="form-control mb-2" 
@@ -71,7 +102,14 @@ export default function App() {
             onChange={ e => setTask(e.target.value) } 
             value={task}
             />
-            <button className="btn btn-dark btn-block col-12" type='submit'>Entrar</button>
+            {
+              modoEdition ? (
+                <button className="btn btn-warning btn-block col-12" type='submit'>Editar</button>
+              ) : (
+
+                <button className="btn btn-dark btn-block col-12" type='submit'>Entrar</button>
+              )
+            }
           </form>
         </div>
       </div>
